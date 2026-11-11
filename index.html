@@ -248,6 +248,7 @@
                 </div>
                 <div class="text-[9px] text-slate-400 mt-1 truncate">Mồi: <b id="chumBaitNameSub" class="text-slate-200">Cám Tổng Hợp</b></div>
                 <div id="luckStatusBadge" class="text-[9px] text-amber-300 font-semibold truncate">Vận khí bình hòa</div>
+                <button id="lakeConditionChip" onclick="toggleGuideModal(true)" title="Xem cá nào đang ăn mạnh" class="mt-1.5 w-full text-left text-[9.5px] font-bold text-sky-200 bg-sky-950/60 border border-sky-400/40 rounded-lg px-2 py-1 truncate active:scale-95 transition">☀️ Đang xem trời…</button>
             </div>
             <!-- Ticker Bình Luận Cộng Đồng Cần Thủ (3 Tin Gần Nhất) -->
             <div onclick="toggleLeaderboardModal(true)" class="glass-panel px-2.5 py-2 rounded-2xl border border-white/10 cursor-pointer hover:border-amber-400/40 transition shadow-md">
@@ -301,7 +302,7 @@
                 </div>
                 <div>
                     <div class="flex justify-between text-slate-300 font-bold mb-0.5">
-                        <span>⚡ Độ căng dây trục & thẻo (Quá 99% = Nổ dây!)</span>
+                        <span>⚡ Độ căng dây (giữ 25–90%: chùng lâu cá vẩy lưỡi, quá 99% nổ dây)</span>
                         <span id="lineTensionText" class="text-rose-300">30%</span>
                     </div>
                     <div class="w-full h-2 bg-slate-900 rounded-full overflow-hidden border border-white/10">
@@ -712,6 +713,25 @@
                 <button onclick="closeFollowModal()" class="w-full py-2.5 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-white/15 text-slate-200 font-bold text-xs active:scale-95 transition">
                     🎣 Để sau, câu tiếp đã
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- MODAL 10: CẨM NANG HỒ CÂU (GIỜ, THỜI TIẾT, MỒI, KIỂU BÁO PHAO)    -->
+    <!-- ================================================================= -->
+    <div id="guideModal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 hidden overflow-y-auto">
+        <div class="w-full max-w-sm bg-[#0a1924] border border-sky-400/50 rounded-3xl shadow-2xl overflow-hidden my-auto animate-card-in flex flex-col max-h-[88vh]">
+            <div class="px-4 py-2.5 border-b border-white/10 flex items-center justify-between bg-slate-900/80">
+                <div>
+                    <h3 class="font-extrabold text-sm text-white">🧭 Cẩm nang hồ câu</h3>
+                    <p class="text-[10px] text-slate-300">Cá nào đang ăn, hợp mồi gì, báo phao ra sao</p>
+                </div>
+                <button onclick="toggleGuideModal(false)" class="w-7 h-7 rounded-full bg-slate-800 text-slate-300 font-bold flex items-center justify-center" aria-label="Đóng">✕</button>
+            </div>
+            <div class="p-3 space-y-2 text-xs overflow-y-auto">
+                <div id="guideConditionBox" class="p-2.5 rounded-2xl bg-sky-950/50 border border-sky-400/40"></div>
+                <div id="guideFishList" class="space-y-2"></div>
             </div>
         </div>
     </div>
@@ -1252,10 +1272,10 @@
                 { id: 'phao_cam_bien', tier: 3, name: '👑 Phao Kim Long Cảm Biến', price: 1650, strikeBonusMs: 750, kingBonus: 0.08, desc: 'Vảy rồng Hoàng Kim, tự chuyển Đỏ Rực khi cá tụt phao!' }
             ],
             baits: [
-                { id: 'moi_cam', tier: 0, name: 'Cám Tổng Hợp Trộn Trứng', price: 0, chumCost: 10, chumPower: 18, kingBonus: 0, bonusSpecies: ['ro_phi', 'ca_diec', 'chep_vang', 'ca_troi', 'ca_me'], desc: 'Dễ dụ cá đàn vào ổ nhanh (Phí xả: 10 🪙/lần)' },
-                { id: 'moi_ngo', tier: 1, name: 'Ngô Ngọt Ủ Men Rượu', price: 280, chumCost: 25, chumPower: 25, kingBonus: 0.03, bonusSpecies: ['chep_vang', 'ca_koi', 'chep_cu', 'tram_co'], desc: 'Mồi tủ của Chép Cụ & Trắm Cỏ (Phí xả: 25 🪙/lần)' },
-                { id: 'moi_oc', tier: 2, name: 'Ốc Vặn Đập Dập Ủ Thính', price: 780, chumCost: 50, chumPower: 32, kingBonus: 0.07, bonusSpecies: ['tram_den', 'lang_nha', 'chep_cu'], desc: 'Đặc sản săn Hắc Công Tử Trắm Đen (Phí xả: 50 🪙/lần)' },
-                { id: 'moi_king', tier: 3, name: '👑 Thính Bí Truyền Săn Cá Chúa', price: 1850, chumCost: 120, chumPower: 45, kingBonus: 0.16, bonusSpecies: ['tram_den', 'tra_dau', 'lang_nha', 'tram_co'], desc: 'Tăng mạnh xác suất dụ Cá Chúa (Phí xả: 120 🪙/lần)' }
+                { id: 'moi_cam', tier: 0, name: 'Cám Tổng Hợp Trộn Trứng', price: 0, chumCost: 10, chumPower: 18, kingBonus: 0, bonusSpecies: ['ro_phi', 'ca_diec', 'chep_vang', 'ca_troi', 'ca_me'], weakSpecies: ['tram_den', 'lang_nha', 'tra_dau'], desc: 'Dễ dụ cá đàn vào ổ nhanh (Phí xả: 10 🪙/lần)' },
+                { id: 'moi_ngo', tier: 1, name: 'Ngô Ngọt Ủ Men Rượu', price: 280, chumCost: 25, chumPower: 25, kingBonus: 0.03, bonusSpecies: ['chep_vang', 'ca_koi', 'chep_cu', 'tram_co'], weakSpecies: ['ca_me', 'lang_nha', 'tra_dau'], desc: 'Mồi tủ của Chép Cụ & Trắm Cỏ (Phí xả: 25 🪙/lần)' },
+                { id: 'moi_oc', tier: 2, name: 'Ốc Vặn Đập Dập Ủ Thính', price: 780, chumCost: 50, chumPower: 32, kingBonus: 0.07, bonusSpecies: ['tram_den', 'lang_nha', 'chep_cu'], weakSpecies: ['ca_me', 'ca_diec', 'ca_troi', 'tram_co'], desc: 'Đặc sản săn Hắc Công Tử Trắm Đen (Phí xả: 50 🪙/lần)' },
+                { id: 'moi_king', tier: 3, name: '👑 Thính Bí Truyền Săn Cá Chúa', price: 1850, chumCost: 120, chumPower: 45, kingBonus: 0.16, bonusSpecies: ['tram_den', 'tra_dau', 'lang_nha', 'tram_co'], weakSpecies: ['ro_phi', 'ca_diec', 'ca_troi'], desc: 'Tăng mạnh xác suất dụ Cá Chúa (Phí xả: 120 🪙/lần)' }
             ]
         };
 
@@ -1457,6 +1477,167 @@
         ];
 
         /********************************************************************
+         * 3b. TẬP TÍNH TỪNG LOÀI: GIỜ ĂN, THỜI TIẾT, KIỂU BÁO PHAO
+         * (Chủ hồ chỉnh các con số ở đây theo kinh nghiệm câu thật)
+         ********************************************************************/
+        // times: hệ số ăn mồi theo buổi (dawn = sáng sớm 5–8h, day = ban ngày 8–16h, dusk = chiều tà 16–19h, night = đêm 19–5h)
+        // weather: hệ số theo thời tiết (sun = nắng đẹp, cloud = râm mát, drizzle = mưa phùn, lowp = oi bức áp thấp)
+        // 1.0 là bình thường; trên 1.3 là ăn mạnh; dưới 0.7 là kém ăn.
+        // bite: kiểu báo phao; wary: độ nhát (0 dạn, 1 hơi nhát, 2 rất nhát → thời gian giật ngắn hơn)
+        const FISH_HABITS = {
+            dep_to_ong: { times: { dawn: 1, day: 1, dusk: 1, night: 1 },         weather: { sun: 1, cloud: 1, drizzle: 1, lowp: 1 },           bite: 'dep',        wary: 0 },
+            ro_phi:     { times: { dawn: 0.9, day: 1.6, dusk: 1.0, night: 0.4 }, weather: { sun: 1.5, cloud: 1.0, drizzle: 0.8, lowp: 0.7 },   bite: 'nhap_nhanh', wary: 0 },
+            ca_diec:    { times: { dawn: 1.6, day: 0.8, dusk: 1.4, night: 0.7 }, weather: { sun: 0.7, cloud: 1.4, drizzle: 1.5, lowp: 0.7 },   bite: 'ron_ren',    wary: 1 },
+            ca_troi:    { times: { dawn: 1.5, day: 0.9, dusk: 1.4, night: 0.6 }, weather: { sun: 0.8, cloud: 1.4, drizzle: 1.2, lowp: 0.7 },   bite: 'loi_phao',   wary: 1 },
+            ca_me:      { times: { dawn: 1.0, day: 1.6, dusk: 0.9, night: 0.4 }, weather: { sun: 1.4, cloud: 1.0, drizzle: 0.7, lowp: 1.3 },   bite: 'benh_phao',  wary: 0 },
+            chep_vang:  { times: { dawn: 1.5, day: 0.8, dusk: 1.4, night: 1.2 }, weather: { sun: 0.7, cloud: 1.4, drizzle: 1.4, lowp: 0.6 },   bite: 'chep',       wary: 1 },
+            ca_koi:     { times: { dawn: 1.2, day: 1.3, dusk: 1.2, night: 0.6 }, weather: { sun: 1.1, cloud: 1.3, drizzle: 1.0, lowp: 0.7 },   bite: 'chep',       wary: 0 },
+            lang_nha:   { times: { dawn: 0.8, day: 0.5, dusk: 1.4, night: 1.7 }, weather: { sun: 0.6, cloud: 1.0, drizzle: 1.3, lowp: 1.6 },   bite: 'loi_phao',   wary: 1 },
+            chep_cu:    { times: { dawn: 1.5, day: 0.5, dusk: 1.2, night: 1.6 }, weather: { sun: 0.5, cloud: 1.4, drizzle: 1.3, lowp: 0.6 },   bite: 'chep_cu',    wary: 2 },
+            tram_co:    { times: { dawn: 1.0, day: 1.5, dusk: 1.1, night: 0.5 }, weather: { sun: 1.4, cloud: 1.1, drizzle: 0.8, lowp: 0.7 },   bite: 'benh_phao',  wary: 1 },
+            tram_den:   { times: { dawn: 1.1, day: 0.6, dusk: 1.5, night: 1.5 }, weather: { sun: 0.6, cloud: 1.4, drizzle: 1.2, lowp: 0.8 },   bite: 'tram_den',   wary: 2 },
+            tra_dau:    { times: { dawn: 0.7, day: 0.5, dusk: 1.3, night: 1.7 }, weather: { sun: 0.6, cloud: 1.0, drizzle: 1.1, lowp: 1.6 },   bite: 'loi_phao',   wary: 2 }
+        };
+        const DEFAULT_HABIT = FISH_HABITS.dep_to_ong;
+
+        const TIME_PERIODS = {
+            dawn:  { label: 'Sáng sớm', icon: '🌅' },
+            day:   { label: 'Ban ngày', icon: '☀️' },
+            dusk:  { label: 'Chiều tà', icon: '🌇' },
+            night: { label: 'Ban đêm',  icon: '🌙' }
+        };
+        // waitFactor: hệ số thời gian chờ cá cắn (nhỏ hơn 1 = cá lên phao nhanh hơn)
+        const WEATHER_TYPES = {
+            sun:     { label: 'Nắng đẹp',         icon: '🌤️', weight: 35, waitFactor: 1.0 },
+            cloud:   { label: 'Râm mát',          icon: '⛅', weight: 30, waitFactor: 0.9 },
+            drizzle: { label: 'Mưa phùn',         icon: '🌦️', weight: 20, waitFactor: 0.8 },
+            lowp:    { label: 'Oi bức, áp thấp',  icon: '🌫️', weight: 15, waitFactor: 1.25 }
+        };
+
+        // Mô tả kiểu báo phao (hiện trong Cẩm nang sau khi người chơi đã câu được loài đó)
+        const BITE_STYLE_TEXT = {
+            dep:        'Phao chìm lừ đừ từ từ, không hề nhấp nháy. Coi chừng vướng rác.',
+            nhap_nhanh: 'Nhấp lia lịa 3–4 nhịp liền rồi kéo tụt dứt khoát. Cá dạn, giật thoải mái.',
+            ron_ren:    'Tín hiệu rất nhẹ: phao nhích lên một chút rồi chìm chậm chỉ 1–2 nấc. Phải soi kính lúp mới thấy.',
+            loi_phao:   'Nhấp một nhịp rồi lôi phao mất hút rất nhanh. Chậm tay là cá chạy.',
+            benh_phao:  'Cá ăn nổi nên đẩy phao bềnh hẳn lên chứ không tụt. Thấy phao trồi cao là giật.',
+            chep:       'Hai nhịp thăm dò chậm rãi, ngừng một lúc rồi tụt đen dứt khoát.',
+            chep_cu:    'Rất khôn: sau nhịp thăm dò có một cú tụt GIẢ rồi trả phao. Phải nhịn, chờ cú tụt đen thứ hai mới giật.',
+            tram_den:   'Nhấp cực nhẹ đúng một lần, im rất lâu, rồi phao tụt sâu từ từ. Thời gian giật ngắn.'
+        };
+
+        function currentTimePeriod() {
+            const hour = new Date(Date.now() + VN_OFFSET_MS).getUTCHours();   // giờ Việt Nam
+            if (hour >= 5 && hour < 8) return 'dawn';
+            if (hour >= 8 && hour < 16) return 'day';
+            if (hour >= 16 && hour < 19) return 'dusk';
+            return 'night';
+        }
+
+        // Thời tiết đổi mỗi 30 phút, tính từ đồng hồ nên mọi người chơi cùng thấy một thời tiết
+        function currentWeather() {
+            const slot = Math.floor(Date.now() / (30 * 60000));
+            let h = (slot * 2654435761) >>> 0;
+            h = ((h ^ (h >>> 15)) * 2246822519) >>> 0;
+            h = (h ^ (h >>> 13)) >>> 0;
+            const keys = Object.keys(WEATHER_TYPES);
+            const total = keys.reduce((s, k) => s + WEATHER_TYPES[k].weight, 0);
+            let r = h % total;
+            for (const k of keys) {
+                r -= WEATHER_TYPES[k].weight;
+                if (r < 0) return k;
+            }
+            return 'sun';
+        }
+
+        function lakeConditions() {
+            return { period: currentTimePeriod(), weather: currentWeather() };
+        }
+
+        function fishHabit(id) { return FISH_HABITS[id] || DEFAULT_HABIT; }
+
+        // Hệ số "cá đang ăn" của một loài ở thời điểm hiện tại (giờ × thời tiết)
+        function fishActivityNow(id, cond = lakeConditions()) {
+            const h = fishHabit(id);
+            return (h.times[cond.period] || 1) * (h.weather[cond.weather] || 1);
+        }
+
+        // Mồi đang dùng hợp, bình thường hay bị loài này chê
+        function baitMatch(fishId, bait = currentTackle.bait) {
+            if ((bait.bonusSpecies || []).includes(fishId)) return 'fav';
+            if ((bait.weakSpecies || []).includes(fishId)) return 'weak';
+            return 'ok';
+        }
+        function baitMultiplier(fishId, bait = currentTackle.bait) {
+            const m = baitMatch(fishId, bait);
+            return m === 'fav' ? 1.85 : m === 'weak' ? 0.5 : 1;
+        }
+
+        function updateLakeConditionChip() {
+            const el = document.getElementById('lakeConditionChip');
+            if (!el) return;
+            const c = lakeConditions();
+            el.textContent = `${TIME_PERIODS[c.period].icon} ${TIME_PERIODS[c.period].label} · ${WEATHER_TYPES[c.weather].icon} ${WEATHER_TYPES[c.weather].label} ›`;
+        }
+
+        /* ---------- CẨM NANG HỒ CÂU ---------- */
+        function toggleGuideModal(show) {
+            const modal = document.getElementById('guideModal');
+            if (show) renderGuideModal();
+            modal.classList.toggle('hidden', !show);
+        }
+
+        function renderGuideModal() {
+            const c = lakeConditions();
+            const w = WEATHER_TYPES[c.weather];
+            document.getElementById('guideConditionBox').innerHTML = `
+                <div class="flex items-center justify-between gap-2">
+                    <span class="font-extrabold text-sky-200">${TIME_PERIODS[c.period].icon} ${TIME_PERIODS[c.period].label} · ${w.icon} ${w.label}</span>
+                    <span class="text-[10px] text-slate-300">Mồi: <b class="text-amber-300">${escapeHtml(currentTackle.bait.name)}</b></span>
+                </div>
+                <div class="text-[10px] text-slate-300 mt-1">${
+                    w.waitFactor < 1 ? 'Trời này cá lên phao nhanh hơn thường lệ.' :
+                    w.waitFactor > 1 ? 'Trời oi, cá lười ăn nên phải chờ lâu hơn; riêng cá da trơn lại ăn mạnh.' :
+                    'Thời tiết đổi mỗi 30 phút. Mỗi loài hợp một kiểu trời và một buổi khác nhau.'
+                }</div>`;
+
+            const periodNames = (habit) => Object.keys(TIME_PERIODS).filter(k => habit.times[k] >= 1.3).map(k => TIME_PERIODS[k].label.toLowerCase());
+            const weatherNames = (habit) => Object.keys(WEATHER_TYPES).filter(k => habit.weather[k] >= 1.3).map(k => WEATHER_TYPES[k].label.toLowerCase());
+            const rows = FORTUNE_CATCHES.filter(f => f.id !== 'dep_to_ong').map(f => {
+                const habit = fishHabit(f.id);
+                const act = fishActivityNow(f.id, c);
+                const status = act >= 1.6 ? { t: '🔥 Đang ăn mạnh', cls: 'text-emerald-300' }
+                             : act >= 0.9 ? { t: '🙂 Ăn bình thường', cls: 'text-slate-200' }
+                             : { t: '😴 Đang kém ăn', cls: 'text-slate-500' };
+                const bm = baitMatch(f.id);
+                const baitTxt = bm === 'fav' ? '<span class="text-emerald-300">hợp mồi đang dùng</span>'
+                              : bm === 'weak' ? '<span class="text-rose-300">chê mồi đang dùng</span>'
+                              : '<span class="text-slate-400">mồi tạm được</span>';
+                const favBaits = TACKLE_OPTIONS.baits.filter(b => (b.bonusSpecies || []).includes(f.id)).map(b => b.name.replace('👑 ', '')).join(', ') || 'chưa rõ';
+                const caught = !!(fishCollection[f.id] && fishCollection[f.id].count > 0);
+                const biteTxt = caught
+                    ? escapeHtml(BITE_STYLE_TEXT[habit.bite] || '')
+                    : '<span class="text-slate-500">🔒 Câu được một con mới biết kiểu ăn mồi của loài này.</span>';
+                const times = periodNames(habit).join(', ') || 'cả ngày';
+                const weathers = weatherNames(habit).join(', ') || 'trời nào cũng ăn';
+                return { act, html: `
+                    <div class="p-2.5 rounded-2xl bg-slate-900/80 border ${act >= 1.6 ? 'border-emerald-400/50' : 'border-white/10'}">
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="font-extrabold text-white truncate">${escapeHtml(f.name)}</span>
+                            <span class="text-[10px] font-bold whitespace-nowrap ${status.cls}">${status.t}</span>
+                        </div>
+                        <div class="text-[10px] text-slate-300 mt-1 leading-snug">
+                            <div>⏰ Ăn mạnh: <b class="text-amber-200">${times}</b> · ${weathers}</div>
+                            <div>🪱 Mồi tủ: <b class="text-amber-200">${escapeHtml(favBaits)}</b> (${baitTxt})</div>
+                            <div>🎣 Báo phao: ${biteTxt}</div>
+                        </div>
+                    </div>` };
+            });
+            rows.sort((a, b) => b.act - a.act);
+            document.getElementById('guideFishList').innerHTML = rows.map(r => r.html).join('');
+        }
+
+        /********************************************************************
          * 4. TRẠNG THÁI NGƯỜI CHƠI, KINH TẾ, CẤP ĐỘ ĐỒ CÂU & BỘ SƯU TẬP
          ********************************************************************/
         let playerCoins = 300;
@@ -1497,6 +1678,20 @@
 
         function getItemLevel(itemId) {
             return Math.min(10, Math.max(1, gearLevels[itemId] || 1));
+        }
+
+        // Mở khoá theo bậc: món bậc sau chỉ mua được khi món bậc ngay trước trong cùng nhóm đã cường hoá tối đa (+10).
+        // Món đã sở hữu từ trước thì vẫn giữ nguyên.
+        const MAX_GEAR_LEVEL = 10;
+        function gearUnlockInfo(catKey, item) {
+            const list = TACKLE_OPTIONS[catKey] || [];
+            const idx = list.findIndex(x => x.id === item.id);
+            if (idx <= 0) return { unlocked: true };
+            if ((ownedGear[catKey] || []).includes(item.id)) return { unlocked: true };
+            const prev = list[idx - 1];
+            const prevOwned = (ownedGear[catKey] || []).includes(prev.id);
+            const prevLv = prevOwned ? getItemLevel(prev.id) : 0;
+            return { unlocked: prevOwned && prevLv >= MAX_GEAR_LEVEL, prev, prevLv, prevOwned };
         }
 
         function getUpgradeCost(item, currentLv) {
@@ -2427,34 +2622,36 @@
             const badge = document.getElementById('floatReadoutBadge');
             const led = document.getElementById('magnifierLed');
             if (!btn || !title || !sub) return;
+            // Cá đã cắn nhưng tín hiệu chưa hiện (loài nhát): giao diện vẫn như đang nhấp, người chơi phải tự đọc phao
+            const uiState = (gameState === STATE.BITE && !biteInfo.cueVisible) ? STATE.NIBBLE : gameState;
 
             // Viền đỏ nhấp nháy quanh màn hình chỉ bật trong lúc phao tụt
             const biteFlash = document.getElementById('biteFlash');
-            if (biteFlash) biteFlash.classList.toggle('active', gameState === STATE.BITE);
+            if (biteFlash) biteFlash.classList.toggle('active', uiState === STATE.BITE);
 
-            if (gameState === STATE.IDLE) {
+            if (uiState === STATE.IDLE) {
                 btn.className = 'flex-1 py-3.5 px-5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 active:scale-95 transition-all shadow-2xl border border-emerald-300/50 flex flex-col items-center justify-center text-slate-950';
                 title.innerHTML = '<span>🎣</span><span>RA CẦN NGAY</span>';
                 sub.textContent = 'Chạm để quăng mồi xuống điểm câu';
                 badge.textContent = 'Chờ ra cần';
                 badge.className = 'mt-1 px-2 py-0.5 rounded-full text-[8px] font-bold bg-slate-800 text-emerald-300 border border-emerald-500/30 whitespace-nowrap';
                 led.className = 'w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse';
-            } else if (gameState === STATE.WAITING || gameState === STATE.BUBBLES || gameState === STATE.NIBBLE) {
+            } else if (uiState === STATE.WAITING || uiState === STATE.BUBBLES || uiState === STATE.NIBBLE) {
                 btn.className = 'flex-1 py-3.5 px-5 rounded-2xl bg-gradient-to-r from-sky-600 to-indigo-700 active:scale-95 transition-all shadow-2xl border border-sky-300/40 flex flex-col items-center justify-center text-white';
                 title.innerHTML = '<span>👀</span><span>CANH PHAO GIẬT CẦN</span>';
                 sub.textContent = 'Đợi phao tụt đen / bềnh mạnh rồi bấm Giật!';
-                if (gameState === STATE.WAITING) badge.textContent = 'Cân 7 câu 3';
-                if (gameState === STATE.BUBBLES) badge.textContent = '🫧 Sủi tăm ổ!';
-                if (gameState === STATE.NIBBLE) badge.textContent = '⚠️ Phao nhấp!';
+                if (uiState === STATE.WAITING) badge.textContent = 'Cân 7 câu 3';
+                if (uiState === STATE.BUBBLES) badge.textContent = '🫧 Sủi tăm ổ!';
+                if (uiState === STATE.NIBBLE) badge.textContent = '⚠️ Phao nhấp!';
                 led.className = 'w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping';
-            } else if (gameState === STATE.BITE) {
+            } else if (uiState === STATE.BITE) {
                 btn.className = 'flex-1 py-3.5 px-5 rounded-2xl bg-gradient-to-r from-rose-500 via-red-500 to-amber-500 animate-strike-btn transition-all shadow-2xl border-2 border-yellow-300 flex flex-col items-center justify-center text-white';
                 title.innerHTML = '<span>⚡</span><span>GIẬT CẦN NGAY!</span>';
                 sub.textContent = 'PHAO TỤT ĐEN RỒI! ĐÓNG CÁ NGAY!';
                 badge.textContent = '🚨 TỤT ĐEN!';
                 badge.className = 'mt-1 px-2 py-0.5 rounded-full text-[8px] font-extrabold bg-rose-600 text-white border border-yellow-300 whitespace-nowrap';
                 led.className = 'w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping';
-            } else if (gameState === STATE.FIGHTING) {
+            } else if (uiState === STATE.FIGHTING) {
                 btn.className = 'flex-1 py-3.5 px-5 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-rose-600 active:scale-95 transition-all shadow-2xl border-2 border-amber-200 flex flex-col items-center justify-center text-slate-950';
                 title.innerHTML = '<span>💪</span><span>ẤN GIỮ / NHẤP DÌU CẦN (90°)</span>';
                 sub.textContent = 'Nhả tay khi dây quá căng • Ấn giữ khi cá mệt!';
@@ -2517,6 +2714,44 @@
         }
 
         // Chu trình Ra Cần chuẩn 8.7 giây tới lúc Phao Tụt Đen
+        /* ---------- KIỂU BÁO PHAO RIÊNG CỦA TỪNG LOÀI ---------- */
+        // t: thời điểm (mili giây từ lúc ra cần, trước khi nhân hệ số trời/ổ mồi); o: phao chìm (+) hay bềnh (−) bao nhiêu;
+        // k: phao chuyển động nhanh hay chậm; fake: cú tụt giả (giật lúc này là trượt).
+        // windowMs: thời gian được phép giật; cueDelay: nút đỏ + viền nhấp nháy hiện chậm bao lâu sau khi phao đã báo
+        // (cá càng nhát thì càng phải tự đọc phao, chờ nút đỏ là mất gần hết thời gian).
+        const BITE_SCRIPTS = {
+            dep:        { bubbles: 0,    steps: [],
+                          bite: { t: 7000, o: 20, k: 0.05 }, windowMs: 1700, cueDelay: 0 },
+            nhap_nhanh: { bubbles: 2500, steps: [{ t: 4000, o: 6 }, { t: 4300, o: 0 }, { t: 4600, o: 8 }, { t: 4900, o: 1 }, { t: 5200, o: 7 }, { t: 5500, o: 0 }],
+                          bite: { t: 6000, o: 40, k: 0.25 }, windowMs: 1250, cueDelay: 0 },
+            ron_ren:    { bubbles: 3000, steps: [{ t: 5200, o: -5, k: 0.08 }, { t: 6100, o: 2, k: 0.08 }],
+                          bite: { t: 7200, o: 15, k: 0.07 }, windowMs: 1050, cueDelay: 250 },
+            loi_phao:   { bubbles: 3000, steps: [{ t: 5000, o: 5 }, { t: 5350, o: 0 }],
+                          bite: { t: 6400, o: 48, k: 0.4 }, windowMs: 850, cueDelay: 0 },
+            benh_phao:  { bubbles: 3500, steps: [{ t: 5800, o: -6, k: 0.1 }, { t: 6500, o: 2, k: 0.1 }],
+                          bite: { t: 8000, o: -24, k: 0.14 }, windowMs: 1150, cueDelay: 150 },
+            chep:       { bubbles: 4000, steps: [{ t: 6100, o: 6 }, { t: 6420, o: -2 }, { t: 7400, o: 9 }, { t: 7750, o: 1 }],
+                          bite: { t: 8700, o: 42, k: 0.18 }, windowMs: 1150, cueDelay: 0 },
+            chep_cu:    { bubbles: 4500, steps: [{ t: 6500, o: 5 }, { t: 6850, o: 0 }, { t: 8000, o: 28, k: 0.2, fake: true }, { t: 8550, o: 2, k: 0.12 }],
+                          bite: { t: 10200, o: 44, k: 0.16 }, windowMs: 1000, cueDelay: 300 },
+            tram_den:   { bubbles: 5000, steps: [{ t: 7500, o: 3, k: 0.08 }, { t: 7900, o: 0, k: 0.08 }],
+                          bite: { t: 10000, o: 38, k: 0.06 }, windowMs: 1050, cueDelay: 350 }
+        };
+        const DEFAULT_FLOAT_SPRING = 0.18;
+        let floatSpringK = DEFAULT_FLOAT_SPRING;   // độ nhanh của phao khi chìm / bềnh
+        let pendingBiteFish = null;                // con cá đang tới ăn mồi, được quyết định ngay lúc ra cần
+        let fakeDipActive = false;                 // đang trong cú tụt giả của cá khôn
+        let biteInfo = { startedAt: 0, windowMs: 1150, cueVisible: true };
+
+        // Hiện tín hiệu "giật ngay" (nút đỏ, viền nhấp nháy, rung máy)
+        function showBiteCue() {
+            if (gameState !== STATE.BITE || biteInfo.cueVisible) return;
+            biteInfo.cueVisible = true;
+            try { if (navigator.vibrate) navigator.vibrate([110, 60, 110]); } catch (e) {}
+            spawnRipple(lakeView.w * spotRatioX, lakeView.h * spotRatioY, 55, 'rgba(244, 63, 94, 0.85)');
+            updateMainButtonUI();
+        }
+
         function castRodSequence() {
             lastCastAt = performance.now();
             clearAllTimers();
@@ -2526,6 +2761,9 @@
             gameState = STATE.WAITING;
             floatOffset = -28;
             targetFloatOffset = 0;
+            floatSpringK = DEFAULT_FLOAT_SPRING;
+            fakeDipActive = false;
+            biteInfo = { startedAt: 0, windowMs: 1150, cueVisible: true };
             updateMainButtonUI();
 
             const W = lakeView.w;
@@ -2533,57 +2771,73 @@
             spawnRipple(W * spotRatioX, H * spotRatioY, 42, 'rgba(56, 189, 248, 0.75)');
             showBannerToast('🎣 Đã ra cần! Quan sát kỹ tăm nước và nhịp phao...', 'emerald');
 
-            // 4.0s: Cá vào ổ sủi tăm
-            timers.push(setTimeout(() => {
-                if (gameState !== STATE.WAITING) return;
-                gameState = STATE.BUBBLES;
-                updateMainButtonUI();
-            }, 4000));
+            // Con cá nào tới ăn được quyết định ngay bây giờ (theo mồi, ổ, giờ, thời tiết); phao sẽ báo theo kiểu của loài đó
+            pendingBiteFish = rollCatchByTackle();
+            const habit = fishHabit(pendingBiteFish.id);
+            const script = BITE_SCRIPTS[habit.bite] || BITE_SCRIPTS.chep;
+            // Thời gian chờ: trời mát / ổ đông cá thì nhanh hơn, và mỗi lần lệch ngẫu nhiên một chút (không đếm nhịp thuộc lòng được)
+            const scale = WEATHER_TYPES[currentWeather()].waitFactor * (1.12 - (chumLevel / 100) * 0.25) * (0.88 + Math.random() * 0.27);
+            const at = (t) => Math.round(t * scale);
 
-            // 6.1s: Nhịp phao nhấp thăm dò 1
-            timers.push(setTimeout(() => {
-                if (gameState !== STATE.BUBBLES) return;
-                gameState = STATE.NIBBLE;
-                targetFloatOffset = 6;
-                audio.playPlop();
-                updateMainButtonUI();
-                setTimeout(() => { if (gameState === STATE.NIBBLE) targetFloatOffset = -2; }, 320);
-            }, 6100));
+            // Cá vào ổ sủi tăm
+            if (script.bubbles) {
+                timers.push(setTimeout(() => {
+                    if (gameState !== STATE.WAITING) return;
+                    gameState = STATE.BUBBLES;
+                    updateMainButtonUI();
+                }, at(script.bubbles)));
+            }
 
-            // 7.4s: Nhịp phao nhấp thăm dò 2
-            timers.push(setTimeout(() => {
-                if (gameState !== STATE.NIBBLE) return;
-                targetFloatOffset = 9;
-                setTimeout(() => { if (gameState === STATE.NIBBLE) targetFloatOffset = 1; }, 350);
-            }, 7400));
+            // Các nhịp nhấp thăm dò (và cú tụt giả nếu có)
+            script.steps.forEach((step, i) => {
+                timers.push(setTimeout(() => {
+                    if (gameState !== STATE.WAITING && gameState !== STATE.BUBBLES && gameState !== STATE.NIBBLE) return;
+                    if (gameState !== STATE.NIBBLE) {
+                        gameState = STATE.NIBBLE;
+                        updateMainButtonUI();
+                    }
+                    if (i === 0) audio.playPlop();
+                    targetFloatOffset = step.o;
+                    floatSpringK = step.k || DEFAULT_FLOAT_SPRING;
+                    fakeDipActive = !!step.fake;
+                }, at(step.t)));
+            });
 
-            // Đúng 8.7s (8700ms): PHAO TỤT ĐEN / BỀNH PHAO BÁO GIẬT!
+            // Cú ăn thật: phao tụt / bềnh theo kiểu của loài
             timers.push(setTimeout(() => {
                 if (gameState !== STATE.NIBBLE && gameState !== STATE.BUBBLES && gameState !== STATE.WAITING) return;
-                gameState = STATE.BITE;
-                // Rung máy báo cá cắn (máy nào không hỗ trợ thì bỏ qua)
-                try { if (navigator.vibrate) navigator.vibrate([110, 60, 110]); } catch (e) {}
-                // Phao tụt đen sâu hoặc bềnh cao
-                targetFloatOffset = Math.random() < 0.8 ? 42 : -22;
-                spawnRipple(lakeView.w * spotRatioX, lakeView.h * spotRatioY, 55, 'rgba(244, 63, 94, 0.85)');
-                updateMainButtonUI();
-
-                // Cửa sổ vàng để giật (phụ thuộc vào loại phao & cấp độ phao đang dùng)
                 const eff = getEffectiveTackleStats();
-                const baseWindowMs = 1150 + eff.strikeBonusMs;
+                // Cá nhát thì thời gian giật ngắn hơn; phao tốt cộng thêm thời gian
+                const windowMs = Math.round(script.windowMs * (1 - 0.1 * (habit.wary || 0)) + eff.strikeBonusMs);
+                // Phao Kim Long Cảm Biến báo ngay lập tức, các phao khác phải chờ độ trễ của loài cá nhát
+                const cueDelay = currentTackle.float.id === 'phao_cam_bien' ? 0 : script.cueDelay;
+                gameState = STATE.BITE;
+                fakeDipActive = false;
+                biteInfo = { startedAt: performance.now(), windowMs, cueVisible: false };
+                targetFloatOffset = script.bite.o;
+                floatSpringK = script.bite.k || DEFAULT_FLOAT_SPRING;
+                if (cueDelay > 0) {
+                    updateMainButtonUI();
+                    timers.push(setTimeout(showBiteCue, cueDelay));
+                } else {
+                    showBiteCue();
+                }
+
                 timers.push(setTimeout(() => {
                     if (gameState === STATE.BITE) {
                         audio.playMissedStrikeSound();
                         resetRealLakeVideoToZeroPaused();
                         gameState = STATE.IDLE;
+                        pendingBiteFish = null;
                         targetFloatOffset = 0;
+                        floatSpringK = DEFAULT_FLOAT_SPRING;
                         chumLevel = Math.max(10, chumLevel - 10);
                         updateChumUI();
                         updateMainButtonUI();
                         showBannerToast('😭 Chậm tay rồi! Cá đã nhả mồi phóng đi mất!', 'rose');
                     }
-                }, baseWindowMs));
-            }, 8700));
+                }, windowMs));
+            }, at(script.bite.t)));
         }
 
         // Xử lý nút bấm chính ở mọi trạng thái (Ra Cần / Giật Sớm / Giật Trúng / Dìu Cần)
@@ -2599,16 +2853,25 @@
                 audio.playMissedStrikeSound();
                 resetRealLakeVideoToZeroPaused();
                 gameState = STATE.IDLE;
+                const wasFake = fakeDipActive;
+                pendingBiteFish = null;
+                fakeDipActive = false;
                 targetFloatOffset = 0;
+                floatSpringK = DEFAULT_FLOAT_SPRING;
                 chumLevel = Math.max(5, chumLevel - 12);
                 updateChumUI();
                 updateMainButtonUI();
                 spawnRipple(lakeView.w * spotRatioX, lakeView.h * spotRatioY, 48, 'rgba(244, 63, 94, 0.8)');
-                showBannerToast('⚠️ Giật vội quá! Cá mới nhấp thăm dò đã làm động ổ rồi!', 'rose');
+                showBannerToast(wasFake
+                    ? '🧠 Bị cá khôn lừa rồi! Đó là cú tụt giả, phải nhịn chờ cú tụt đen thật.'
+                    : '⚠️ Giật vội quá! Cá mới nhấp thăm dò đã làm động ổ rồi!', 'rose');
             } else if (gameState === STATE.BITE) {
-                // Giật đúng nhịp 8.7s -> Đóng dính cá & bắt đầu dòng cá theo số KG
+                // Giật trong lúc phao báo -> đóng dính cá. Giật càng sớm trong khoảng cho phép thì lưỡi đóng càng chắc.
+                const elapsed = performance.now() - biteInfo.startedAt;
+                const quality = elapsed <= biteInfo.windowMs * 0.45 ? 'perfect' : elapsed <= biteInfo.windowMs * 0.8 ? 'good' : 'late';
                 clearAllTimers();
-                startWeightBasedFishFight();
+                floatSpringK = DEFAULT_FLOAT_SPRING;
+                startWeightBasedFishFight(quality);
             }
             // Khi đang dòng cá, việc ấn giữ / nhả tay do các sự kiện chạm trên nút xử lý (setHoldingRod),
             // không xử lý thêm ở đây để nhả tay là hết kéo ngay.
@@ -2622,6 +2885,7 @@
             const eff = getEffectiveTackleStats();
             const pureLuckRoll = Math.random();
             const luckFactor = (pureLuckRoll * 0.65) + Math.max(0, ancestorLuckBonus * 1.8);
+            const cond = lakeConditions();
 
             const weightedPool = FORTUNE_CATCHES.map(fish => {
                 let w = fish.rarityWeight;
@@ -2633,9 +2897,9 @@
                     w *= (1.4 - luckFactor * 0.4);
                 }
 
-                if (currentTackle.bait.bonusSpecies.includes(fish.id)) {
-                    w *= 1.85;
-                }
+                // Mồi hợp / bị chê, và loài đó đang ăn mạnh hay kém theo giờ + thời tiết hiện tại
+                w *= baitMultiplier(fish.id);
+                w *= fishActivityNow(fish.id, cond);
                 return { fish, w };
             });
 
@@ -2708,29 +2972,54 @@
             fightState.holdingRod = isHolding;
         }
 
-        function startWeightBasedFishFight() {
-            const caught = rollCatchByTackle();
+        function startWeightBasedFishFight(quality = 'good') {
+            const caught = pendingBiteFish || rollCatchByTackle();
+            pendingBiteFish = null;
             currentPendingCatch = caught;
             gameState = STATE.FIGHTING;
 
             audio.playHookStrike();
             audio.startLineScream(caught.weight);
 
+            const title = `${(caught.pullPower || 1) > 1 ? '💪 Cá kéo rất khoẻ!' : '🔥 Đóng trúng cá!'} Dự đoán ~${caught.weight}kg (${caught.sizeLabel})`;
             fightState = {
                 active: true,
                 fish: caught,
                 stamina: 100,
-                tension: 32,
+                // Giật chuẩn nhịp: lưỡi đóng sâu, khó bong. Giật muộn: cá chỉ dính mép, dễ bong và dây căng sẵn.
+                tension: quality === 'perfect' ? 26 : quality === 'late' ? 40 : 32,
+                hookSlipMult: quality === 'perfect' ? 0.5 : quality === 'late' ? 1.8 : 1,
+                lateStrike: quality === 'late',
                 holdingRod: false,
                 elapsedSec: 0,
+                slackSec: 0,                                   // dây chùng liên tục bao lâu
+                nextDashAt: 1.8 + Math.random() * 2.2,         // lúc cá lao đi lần tới
+                dashUntil: 0,
+                title,
                 fishX: spotRatioX,
                 fishVX: (Math.random() < 0.5 ? -1 : 1) * 0.004
             };
 
             document.getElementById('fightHudPanel').classList.remove('hidden');
             document.body.classList.add('shake-fighting');
-            document.getElementById('fightFishTitle').textContent = `${(caught.pullPower || 1) > 1 ? '💪 Cá kéo rất khoẻ!' : '🔥 Đóng trúng cá!'} Dự đoán ~${caught.weight}kg (${caught.sizeLabel})`;
+            document.getElementById('fightFishTitle').textContent = title;
             updateMainButtonUI();
+            if (quality === 'perfect') showBannerToast('⚡ Giật chuẩn nhịp! Lưỡi đóng sâu, cá khó bong.', 'emerald');
+            else if (quality === 'late') showBannerToast('😬 Giật hơi muộn, cá chỉ dính mép. Dìu thật khéo kẻo bong!', 'amber');
+        }
+
+        // Kết thúc lượt dòng cá vì mất cá (bong lưỡi, vẩy lưỡi)
+        function loseFishDuringFight(toast, ticker) {
+            fightState.active = false;
+            audio.stopLineScream();
+            audio.playHookSlipSound();
+            document.getElementById('fightHudPanel').classList.add('hidden');
+            document.body.classList.remove('shake-fighting');
+            resetRealLakeVideoToZeroPaused();
+            gameState = STATE.IDLE;
+            updateMainButtonUI();
+            showBannerToast(toast, 'rose');
+            if (ticker) pushLiveCommentTicker(playerName, ticker);
         }
 
         function updateFishFightFrame(dtMs) {
@@ -2748,28 +3037,40 @@
 
             // Kiểm tra nguy cơ BONG CÁ / OẢI LƯỠI nếu dùng lưỡi câu yếu khi gặp cá quá lớn đang quẫy mạnh
             // Xác suất tính theo thời gian thật (dt) để máy màn hình 120Hz không bị bong cá gấp đôi máy 60Hz
-            if (isSurging && fish.weight > 10 && Math.random() < (1 - eff.hookHoldRate) * 0.035 * Math.min(3, dt * 60)) {
-                fightState.active = false;
-                audio.stopLineScream();
-                audio.playHookSlipSound();
-                document.getElementById('fightHudPanel').classList.add('hidden');
-                document.body.classList.remove('shake-fighting');
-                resetRealLakeVideoToZeroPaused();
-                gameState = STATE.IDLE;
-                updateMainButtonUI();
-                showBannerToast(`🪝 BONG CÁ OẢI LƯỠI! ${currentTackle.hook.name} không giữ nổi hàm cá ~${fish.weight}kg! Hãy nâng cấp Lưỡi Câu!`, 'rose');
-                pushLiveCommentTicker(playerName, `vừa bị cá khủng ~${fish.weight}kg quẫy oải lưỡi bong mất! 😢`);
+            // Giật muộn (cá dính mép) thì cá từ 3kg đã có thể bong; bình thường chỉ cá trên 10kg
+            const slipMinKg = fightState.lateStrike ? 3 : 10;
+            if (isSurging && fish.weight > slipMinKg
+                && Math.random() < (1 - eff.hookHoldRate) * 0.035 * (fightState.hookSlipMult || 1) * Math.min(3, dt * 60)) {
+                loseFishDuringFight(
+                    `🪝 BONG CÁ OẢI LƯỠI! ${currentTackle.hook.name} không giữ nổi hàm cá ~${fish.weight}kg! Hãy nâng cấp Lưỡi Câu!`,
+                    `vừa bị cá khủng ~${fish.weight}kg quẫy oải lưỡi bong mất! 😢`);
                 return;
             }
 
+            // CÁ LAO: thỉnh thoảng cá bứt tốc khoảng 0,75 giây. Lúc này phải nhả tay, còn ghì là dây căng vọt.
+            const canDash = fish.weight >= 3 || (fish.pullPower || 1) > 1;
+            if (canDash && fightState.elapsedSec >= fightState.nextDashAt) {
+                fightState.dashUntil = fightState.elapsedSec + 0.75;
+                fightState.nextDashAt = fightState.elapsedSec + (fish.sizeCategory === 'king' ? 1.9 : 2.6) + Math.random() * 2.6;
+                document.getElementById('fightFishTitle').textContent = '⚠️ CÁ LAO! NHẢ TAY RA!';
+            }
+            const isDashing = fightState.elapsedSec < fightState.dashUntil;
+            if (!isDashing && fightState.dashUntil > 0 && fightState.dashUntil !== -1) {
+                document.getElementById('fightFishTitle').textContent = fightState.title;
+                fightState.dashUntil = -1;
+            }
+
             // Tính độ căng dây trục & thẻo
-            if (isSurging) {
+            if (isDashing) {
+                fightState.tension += (30 * overloadRatio / eff.tensionResist) * dt;
+                if (fightState.holdingRod) fightState.tension += 55 * overloadRatio * dt;
+            } else if (isSurging) {
                 fightState.tension += (22 * overloadRatio / eff.tensionResist) * dt;
                 if (fightState.holdingRod) {
                     fightState.tension += 25 * overloadRatio * dt;
                 }
             } else {
-                fightState.tension -= 18 * dt;
+                fightState.tension -= 6 * dt;
             }
 
             if (fightState.holdingRod) {
@@ -2778,13 +3079,26 @@
                 fightState.stamina -= drainRate * dt;
                 fightState.tension += 11.5 * dt;
             } else {
-                const passiveDrain = (100 / fish.fightSeconds) * 0.68 * Math.min(1.4, eff.rodPower * 0.75);
+                // Buông tay thì cá gần như không mệt: muốn lên cá phải chủ động dìu
+                const passiveDrain = (100 / fish.fightSeconds) * 0.3 * Math.min(1.4, eff.rodPower * 0.75);
                 fightState.stamina -= passiveDrain * dt;
                 fightState.tension -= 14.5 * dt;
             }
 
             fightState.tension = Math.max(12, Math.min(105, fightState.tension));
             fightState.stamina = Math.max(0, fightState.stamina);
+
+            // DÂY CHÙNG: để dây dưới 22% quá 2,2 giây thì cá (từ 2kg) có thể vẩy được lưỡi
+            if (fish.weight >= 2) {
+                if (fightState.tension < 22) fightState.slackSec += dt;
+                else fightState.slackSec = Math.max(0, fightState.slackSec - dt * 2);
+                if (fightState.slackSec > 2.2 && Math.random() < 0.5 * (fightState.hookSlipMult || 1) * dt) {
+                    loseFishDuringFight(
+                        `🪝 Dây chùng quá lâu, cá ~${fish.weight}kg vẩy được lưỡi! Hãy giữ dây căng vừa phải.`,
+                        `để dây chùng, cá ~${fish.weight}kg vẩy lưỡi chạy mất! 😢`);
+                    return;
+                }
+            }
 
             audio.modulateLineScream(Math.min(1, fightState.tension / 95));
 
@@ -3280,6 +3594,35 @@
                 const upCost = getUpgradeCost(item, lv);
                 const svgBox = getGearSvgIllustration(activeShopCat, idx);
                 const statLine = getStatDescriptionForGear(activeShopCat, item, lv);
+                const lock = gearUnlockInfo(activeShopCat, item);
+                if (!lock.unlocked) {
+                    // Món còn khoá: mờ đi, hiện điều kiện mở khoá và thanh tiến độ của món bậc trước
+                    const pct = Math.round((lock.prevLv / MAX_GEAR_LEVEL) * 100);
+                    return `
+                    <div class="p-3 rounded-2xl border bg-slate-950/70 border-white/10 flex flex-col gap-2">
+                        <div class="flex items-start gap-2.5 opacity-55">
+                            ${svgBox}
+                            <div class="min-w-0 flex-1">
+                                <div class="flex items-center justify-between gap-1">
+                                    <span class="font-extrabold text-white truncate">${item.name}</span>
+                                    <span class="px-1.5 py-0.5 rounded-md text-[9px] font-black bg-slate-800 text-slate-300 border border-white/15 shrink-0">🔒 Khoá</span>
+                                </div>
+                                <p class="text-[10px] text-slate-400 mt-0.5 leading-snug">${item.desc}</p>
+                                <div class="text-[10px] text-emerald-300 mt-1">${statLine}</div>
+                            </div>
+                        </div>
+                        <div class="pt-1.5 border-t border-white/10">
+                            <div class="flex items-center justify-between text-[10px] text-amber-200 font-bold">
+                                <span class="truncate">Mở khoá khi ${lock.prev.name.replace('👑 ', '')} đạt Cấp +10</span>
+                                <span class="shrink-0 ml-2">${lock.prevOwned ? `+${lock.prevLv}/10` : 'chưa có'}</span>
+                            </div>
+                            <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden mt-1">
+                                <div class="h-full bg-gradient-to-r from-purple-500 to-amber-400" style="width:${pct}%"></div>
+                            </div>
+                            <div class="text-[10px] text-slate-400 mt-1">Giá khi mở khoá: ${item.price} 🪙</div>
+                        </div>
+                    </div>`;
+                }
 
                 return `
                     <div class="p-3 rounded-2xl border ${isEquipped ? 'bg-emerald-950/60 border-emerald-400 shadow-lg' : 'bg-slate-900/85 border-white/10'} flex flex-col justify-between gap-2.5">
@@ -3318,6 +3661,13 @@
             if (!item) return;
             if (!ownedGear[catKey]) ownedGear[catKey] = [];
             if (!ownedGear[catKey].includes(itemId)) {
+                const lock = gearUnlockInfo(catKey, item);
+                if (!lock.unlocked) {
+                    showBannerToast(lock.prevOwned
+                        ? `🔒 Cần cường hoá ${lock.prev.name} lên Cấp +10 (đang +${lock.prevLv}) mới mở khoá ${item.name}.`
+                        : `🔒 Phải có ${lock.prev.name} và cường hoá lên Cấp +10 trước đã.`, 'slate');
+                    return;
+                }
                 if (playerCoins < item.price) {
                     showBannerToast(`⚠️ Không đủ Xu! Cần ${item.price} 🪙 (Hãy bán cá để lấy thêm Xu)`, 'rose');
                     return;
@@ -4115,7 +4465,7 @@
 
             if (gameState === STATE.FIGHTING) updateFishFightFrame(dtMs);
 
-            const springForce = (targetFloatOffset - floatOffset) * 0.18;
+            const springForce = (targetFloatOffset - floatOffset) * floatSpringK;
             floatVelocity = (floatVelocity + springForce) * 0.76;
             floatOffset += floatVelocity;
 
@@ -4244,6 +4594,8 @@
                 showBannerToast(`👋 Chào mừng ${playerName} quay lại! Tiến độ của bạn vẫn được giữ nguyên.`, 'emerald');
             }
             maybeOpenDailyOnEntry();
+            updateLakeConditionChip();
+            setInterval(updateLakeConditionChip, 60000);   // giờ và thời tiết đổi thì dòng trạng thái đổi theo
             await restoreSavedMediaOnStartup();
             initGoogleSitesLiveRelay();
             requestAnimationFrame(animateLake);
