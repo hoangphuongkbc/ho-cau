@@ -219,9 +219,10 @@
                 <span>Rọng cá</span>
                 <i id="basketCountBadge" class="dock-badge bg-sky-500/90">0</i>
             </button>
-            <button onclick="toggleStudioModal(true)" class="dock-btn text-slate-200" title="Cài đặt video hồ và âm thanh">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>
-                <span>Cài đặt</span>
+            <button onclick="toggleDailyModal(true)" class="dock-btn text-rose-300" title="Quà điểm danh và nhiệm vụ hôm nay">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11h16v9H4z"/><path d="M3 7h18v4H3zM12 7v13"/><path d="M12 7c-1.5-3.5-5.5-3-5 0M12 7c1.5-3.5 5.5-3 5 0"/></svg>
+                <span>Nhiệm vụ</span>
+                <i id="dailyBadge" class="dock-badge bg-rose-500 hidden">1</i>
             </button>
             <button onclick="toggleAudio()" class="dock-btn text-slate-200" title="Bật hoặc tắt âm thanh">
                 <svg id="audioIconOn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>
@@ -508,10 +509,11 @@
 
             <!-- Tab Switcher -->
             <div class="flex border-b border-white/10 text-[11px] font-bold bg-slate-900/40">
-                <button onclick="switchLeaderboardTab('total')" id="tabTotalBtn" class="flex-1 py-2.5 text-center text-amber-300 border-b-2 border-amber-400">⚖️ Top Tổng KG</button>
-                <button onclick="switchLeaderboardTab('single')" id="tabSingleBtn" class="flex-1 py-2.5 text-center text-slate-400 border-b-2 border-transparent">👑 Cá Đơn To Nhất</button>
+                <button onclick="switchLeaderboardTab('week')" id="tabWeekBtn" class="flex-1 py-2.5 text-center text-amber-300 border-b-2 border-amber-400">🏆 Giải Tuần</button>
+                <button onclick="switchLeaderboardTab('total')" id="tabTotalBtn" class="flex-1 py-2.5 text-center text-slate-400 border-b-2 border-transparent">⚖️ Mọi Thời Đại</button>
                 <button onclick="switchLeaderboardTab('chat')" id="tabChatBtn" class="flex-1 py-2.5 text-center text-slate-400 border-b-2 border-transparent">💬 Trò Chuyện</button>
             </div>
+            <div id="weekInfoBox" class="px-4 pt-3 text-xs"></div>
 
             <div class="p-4 space-y-2 max-h-[42vh] overflow-y-auto flex-1" id="leaderboardListContainer"></div>
             <div class="p-4 space-y-2 max-h-[42vh] overflow-y-auto flex-1 hidden" id="chatListContainer"></div>
@@ -710,6 +712,36 @@
                 <button onclick="closeFollowModal()" class="w-full py-2.5 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-white/15 text-slate-200 font-bold text-xs active:scale-95 transition">
                     🎣 Để sau, câu tiếp đã
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- MODAL 9: QUÀ ĐIỂM DANH & NHIỆM VỤ HẰNG NGÀY                       -->
+    <!-- ================================================================= -->
+    <div id="dailyModal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 hidden overflow-y-auto">
+        <div class="w-full max-w-sm bg-[#0a1924] border border-rose-400/50 rounded-3xl shadow-2xl overflow-hidden my-auto animate-card-in">
+            <div class="px-4 py-2.5 border-b border-white/10 flex items-center justify-between bg-slate-900/80">
+                <div>
+                    <h3 class="font-extrabold text-sm text-white">🎁 Quà & nhiệm vụ hôm nay</h3>
+                    <p class="text-[10px] text-slate-300">Đổi mới lúc 0 giờ mỗi ngày</p>
+                </div>
+                <button onclick="toggleDailyModal(false)" class="w-7 h-7 rounded-full bg-slate-800 text-slate-300 font-bold flex items-center justify-center" aria-label="Đóng">✕</button>
+            </div>
+            <div class="p-3 space-y-3 text-xs">
+                <div class="p-3 rounded-2xl bg-slate-900/80 border border-amber-400/30 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="font-extrabold text-amber-300">📅 Điểm danh 7 ngày</span>
+                        <span id="dailyStreakLabel" class="text-[10px] text-slate-300"></span>
+                    </div>
+                    <div id="dailyCheckinStrip" class="grid grid-cols-7 gap-1"></div>
+                    <button id="dailyCheckinBtn" onclick="claimDailyCheckin()" class="w-full py-2.5 rounded-2xl font-black text-xs active:scale-95 transition"></button>
+                </div>
+                <div class="space-y-2">
+                    <div class="font-extrabold text-emerald-300 px-1">🎯 Nhiệm vụ hôm nay</div>
+                    <div id="dailyMissionList" class="space-y-2"></div>
+                </div>
+                <button onclick="toggleDailyModal(false); toggleStudioModal(true)" class="w-full text-[10px] text-slate-500 underline pt-1">Cài đặt video hồ &amp; âm thanh</button>
             </div>
         </div>
     </div>
@@ -1644,10 +1676,23 @@
                 if (btn) btn.textContent = '⏳ Đang kiểm tra tên...';
                 try {
                     // Máy chủ không trả lời sau 10 giây thì cho vào chơi, tạm lưu trên máy
+                    const checkPromise = window.cloudStore.checkIn(rawName.slice(0, 24), pin);
                     cloudResult = await Promise.race([
-                        window.cloudStore.checkIn(rawName.slice(0, 24), pin),
+                        checkPromise,
                         new Promise(resolve => setTimeout(() => resolve({ status: 'offline' }), 10000))
                     ]);
+                    if (cloudResult.status === 'offline') {
+                        // Mạng chậm: máy chủ trả lời muộn thì vẫn nhận kết quả, để tên và PIN vừa đăng ký không bị bỏ rơi
+                        const nameAtCheckin = normalizeAnglerName(rawName);
+                        checkPromise.then(late => {
+                            if (late && (late.status === 'new' || late.status === 'restored') && !cloudSaveId
+                                && normalizeAnglerName(playerName) === nameAtCheckin) {
+                                cloudSaveId = late.saveId;
+                                cloudSyncChecked = true;
+                                saveGameProgress();
+                            }
+                        }).catch(() => {});
+                    }
                 } catch (e) {
                     cloudResult = { status: 'offline' };
                 }
@@ -1744,6 +1789,7 @@
             } else {
                 showBannerToast(`🎫 Chào mừng cần thủ ${playerName} (Vé ${selectedTicketTitle})! Chúc bạn lên Cá Chúa!`, 'amber');
             }
+            maybeOpenDailyOnEntry();
         }
 
         function refreshAllHudAfterLoad() {
@@ -1886,15 +1932,100 @@
             renderLiveCommentTicker();
         }
 
-        let activeLbTab = 'total';
+        let activeLbTab = 'week';
         function switchLeaderboardTab(tab) {
             activeLbTab = tab;
-            document.getElementById('tabTotalBtn').className = `flex-1 py-2.5 text-center border-b-2 ${tab === 'total' ? 'text-amber-300 border-amber-400 font-bold' : 'text-slate-400 border-transparent'}`;
-            document.getElementById('tabSingleBtn').className = `flex-1 py-2.5 text-center border-b-2 ${tab === 'single' ? 'text-yellow-300 border-yellow-400 font-bold' : 'text-slate-400 border-transparent'}`;
-            document.getElementById('tabChatBtn').className = `flex-1 py-2.5 text-center border-b-2 ${tab === 'chat' ? 'text-emerald-300 border-emerald-400 font-bold' : 'text-slate-400 border-transparent'}`;
+            const on = 'font-bold', off = 'text-slate-400 border-transparent';
+            document.getElementById('tabWeekBtn').className = `flex-1 py-2.5 text-center border-b-2 ${tab === 'week' ? 'text-amber-300 border-amber-400 ' + on : off}`;
+            document.getElementById('tabTotalBtn').className = `flex-1 py-2.5 text-center border-b-2 ${tab === 'total' ? 'text-yellow-300 border-yellow-400 ' + on : off}`;
+            document.getElementById('tabChatBtn').className = `flex-1 py-2.5 text-center border-b-2 ${tab === 'chat' ? 'text-emerald-300 border-emerald-400 ' + on : off}`;
             document.getElementById('leaderboardListContainer').classList.toggle('hidden', tab === 'chat');
             document.getElementById('chatListContainer').classList.toggle('hidden', tab !== 'chat');
             renderLeaderboardAndChat();
+        }
+
+        /********************************************************************
+         * 5b. GIẢI ĐẤU TUẦN (THỨ HAI → CHỦ NHẬT, GIỜ VIỆT NAM, MỖI TUẦN XẾP LẠI TỪ ĐẦU)
+         ********************************************************************/
+        // Ghi phần thưởng của giải vào đây để hiện trong bảng Giải Tuần. Để trống ('') thì không hiện dòng phần thưởng.
+        const WEEKLY_PRIZE_TEXT = 'Giải thưởng: đang chờ nhà tài trợ';
+        const VN_OFFSET_MS = 7 * 3600 * 1000;
+        const DAY_MS = 86400000;
+
+        function vnDayIndex(ms = Date.now()) { return Math.floor((ms + VN_OFFSET_MS) / DAY_MS); }
+        function vnDayKey(ms = Date.now()) { return new Date(ms + VN_OFFSET_MS).toISOString().slice(0, 10); }
+        // Ngày 1/1/1970 là thứ Năm, nên cộng 3 để tuần bắt đầu từ thứ Hai
+        function weekIndexOf(ms = Date.now()) { return Math.floor((vnDayIndex(ms) + 3) / 7); }
+        function weekKeyOf(idx) { return 'w' + idx; }
+        function currentWeekKey() { return weekKeyOf(weekIndexOf()); }
+        function weekEndMs(idx = weekIndexOf()) { return ((idx + 1) * 7 - 3) * DAY_MS - VN_OFFSET_MS; }
+        function weekRangeLabel(idx = weekIndexOf()) {
+            const fmt = (dayIdx) => {
+                const d = new Date(dayIdx * DAY_MS);
+                return `${String(d.getUTCDate()).padStart(2, '0')}/${String(d.getUTCMonth() + 1).padStart(2, '0')}`;
+            };
+            return `${fmt(idx * 7 - 3)} – ${fmt(idx * 7 + 3)}`;
+        }
+        function weekCountdownText() {
+            const ms = Math.max(0, weekEndMs() - Date.now());
+            const d = Math.floor(ms / DAY_MS), h = Math.floor((ms % DAY_MS) / 3600000), m = Math.floor((ms % 3600000) / 60000);
+            return d > 0 ? `còn ${d} ngày ${h} giờ` : h > 0 ? `còn ${h} giờ ${m} phút` : `còn ${m} phút`;
+        }
+
+        let weekState = { key: '', totalWeight: 0, count: 0, maxWeight: 0, bestFish: '' };   // thành tích tuần của người chơi
+        let weekBoard = [];      // các dòng xếp hạng của tuần hiện tại (chỉ người chơi thật)
+        let lastWeekTop = [];    // top 3 tuần trước, lấy từ máy chủ
+
+        function ensureCurrentWeek() {
+            const key = currentWeekKey();
+            if (weekState.key !== key) {
+                weekState = { key, totalWeight: 0, count: 0, maxWeight: 0, bestFish: '' };
+                weekBoard = weekBoard.filter(r => r.weekKey === key);
+                if (typeof window.onWeekChanged === 'function') window.onWeekChanged(key);
+            }
+        }
+
+        function myWeekEntry(time) {
+            return {
+                name: playerName,
+                fish: weekState.bestFish || 'Chưa có cá',
+                weight: +(weekState.maxWeight || 0).toFixed(2),
+                totalWeight: +(weekState.totalWeight || 0).toFixed(2),
+                count: weekState.count || 0,
+                time: time || '',
+                weekKey: weekState.key,
+                isMe: true
+            };
+        }
+
+        function upsertWeekRow(row) {
+            if (!row || !row.name || row.weekKey !== currentWeekKey()) return;
+            const idx = weekBoard.findIndex(x => (row.isMe && x.isMe) || x.name === row.name);
+            if (idx >= 0) {
+                if (weekBoard[idx].isMe && !row.isMe) return;   // tin từ ngoài không ghi đè dòng của chính mình
+                weekBoard[idx] = row;
+            } else {
+                weekBoard.push(row);
+            }
+            if (weekBoard.length > 120) {
+                weekBoard.sort((a, b) => (b.totalWeight || 0) - (a.totalWeight || 0));
+                weekBoard.length = 120;
+            }
+        }
+
+        // Ghi một con cá vào thành tích tuần (chiếc dép không tính)
+        function recordWeeklyCatch(fish) {
+            ensureCurrentWeek();
+            if (fish.id === 'dep_to_ong') return null;
+            weekState.totalWeight = +((weekState.totalWeight || 0) + fish.weight).toFixed(2);
+            weekState.count = (weekState.count || 0) + 1;
+            if (fish.weight > (weekState.maxWeight || 0)) {
+                weekState.maxWeight = fish.weight;
+                weekState.bestFish = fish.displayName;
+            }
+            const entry = myWeekEntry(fish.time);
+            upsertWeekRow(entry);
+            return entry;
         }
 
         function checkAndUpdateLeaderboard(record) {
@@ -1924,63 +2055,92 @@
                 leaderboard.push(entry);
             }
 
+            const weekEntry = recordWeeklyCatch(record);
             renderLeaderboardAndChat();
 
             const autoComment = {
                 name: playerName,
-                text: `🔥 Vừa câu thêm ${record.displayName} (${record.weight}kg) • Tổng tích lũy: ${newTotalWeight}kg (${newCount} con)!`,
+                text: `🔥 Vừa câu thêm ${record.displayName} (${record.weight}kg) • Tuần này: ${weekState.totalWeight}kg (${weekState.count} con)!`,
                 time: record.time
             };
-            // Một dòng thông báo cho mỗi con cá (trước đây bị chèn 2 dòng gần giống nhau, danh sách phình mãi)
+            // Một dòng thông báo cho mỗi con cá
             pushLiveCommentTicker(autoComment.name, autoComment.text);
-            if (window.pushLeaderboardToCloud) window.pushLeaderboardToCloud(entry, autoComment);
-            if (window.broadcastLiveEvent) window.broadcastLiveEvent('CATCH', { entry, comment: autoComment });
+            if (window.pushLeaderboardToCloud) window.pushLeaderboardToCloud(entry, weekEntry);
+            if (window.broadcastLiveEvent) window.broadcastLiveEvent('CATCH', { entry, weekEntry, comment: autoComment });
         }
 
         function renderLeaderboardAndChat() {
             const topContainer = document.getElementById('leaderboardListContainer');
             const chatContainer = document.getElementById('chatListContainer');
+            const weekBox = document.getElementById('weekInfoBox');
             if (!topContainer || !chatContainer) return;
+            ensureCurrentWeek();
 
-            const sortedRows = [...leaderboard].map(r => ({
+            const isWeek = activeLbTab === 'week';
+            const source = isWeek ? weekBoard : leaderboard;
+            const sortedRows = [...source].map(r => ({
                 ...r,
                 totalWeight: typeof r.totalWeight === 'number' ? r.totalWeight : (r.weight || 0),
                 count: typeof r.count === 'number' ? r.count : 1
-            })).sort((a, b) => {
-                if (activeLbTab === 'single') return (b.weight || 0) - (a.weight || 0);
-                return (b.totalWeight || 0) - (a.totalWeight || 0);
-            });
+            })).sort((a, b) => (b.totalWeight || 0) - (a.totalWeight || 0));
+
+            // Khung thông tin giải tuần
+            if (weekBox) {
+                weekBox.classList.toggle('hidden', !isWeek);
+                if (isWeek) {
+                    const champ = lastWeekTop[0];
+                    weekBox.innerHTML = `
+                        <div class="p-2.5 rounded-2xl bg-gradient-to-r from-amber-500/20 to-rose-500/10 border border-amber-400/40 space-y-1">
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="font-extrabold text-amber-300">🏆 Giải tuần ${weekRangeLabel()}</span>
+                                <span class="text-[10px] font-bold text-rose-200 bg-rose-500/25 border border-rose-400/40 rounded-full px-2 py-0.5 whitespace-nowrap">⏳ ${weekCountdownText()}</span>
+                            </div>
+                            <div class="text-[10px] text-slate-300">Xếp theo tổng số kg câu được từ thứ Hai đến hết Chủ nhật. Sang tuần mới, mọi người đua lại từ đầu.</div>
+                            ${WEEKLY_PRIZE_TEXT ? `<div class="text-[11px] font-bold text-emerald-300">🎁 ${escapeHtml(WEEKLY_PRIZE_TEXT)}</div>` : ''}
+                            ${champ ? `<div class="text-[10px] text-amber-200">👑 Vô địch tuần trước: <b>${escapeHtml(champ.name)}</b> (${Number(champ.totalWeight || 0).toFixed(1)}kg, ${champ.count || 0} con)</div>` : ''}
+                        </div>`;
+                }
+            }
 
             const myRank = sortedRows.findIndex(x => x.isMe || x.name === playerName) + 1;
-            document.getElementById('playerRankStatus').textContent = myRank > 0
-                ? `Hạng của ${playerName}: #${myRank} (${stats.totalWeight.toFixed(1)}kg / ${stats.totalCount} con)`
-                : 'Hãy câu cá để nhảy bảng xếp hạng!';
+            const statusEl = document.getElementById('playerRankStatus');
+            if (statusEl) {
+                if (isWeek) {
+                    statusEl.textContent = myRank > 0
+                        ? `Tuần này: hạng #${myRank} (${Number(weekState.totalWeight || 0).toFixed(1)}kg / ${weekState.count || 0} con)`
+                        : 'Câu một con cá để vào bảng giải tuần!';
+                } else {
+                    statusEl.textContent = myRank > 0
+                        ? `Hạng của ${playerName}: #${myRank} (${stats.totalWeight.toFixed(1)}kg / ${stats.totalCount} con)`
+                        : 'Hãy câu cá để nhảy bảng xếp hạng!';
+                }
+            }
 
-            topContainer.innerHTML = sortedRows.map((row, idx) => {
-                const isPlayer = row.isMe || row.name === playerName;
-                const mainMetric = activeLbTab === 'single'
-                    ? `${Number(row.weight || 0).toFixed(2)} kg`
-                    : `${Number(row.totalWeight || row.weight || 0).toFixed(2)} kg`;
-                const subMetric = activeLbTab === 'single'
-                    ? `Tổng: ${Number(row.totalWeight || row.weight || 0).toFixed(1)}kg (${row.count || 1} con)`
-                    : `${row.count || 1} con • Max: ${Number(row.weight || 0).toFixed(1)}kg`;
-
-                return `
-                    <div class="p-2.5 rounded-2xl ${isPlayer ? 'bg-emerald-900/50 border-emerald-400/60' : 'bg-slate-800/70 border-white/10'} border flex items-center justify-between text-xs">
-                        <div class="flex items-center gap-2.5 min-w-0">
-                            <span class="w-6 h-6 shrink-0 rounded-full bg-slate-900 flex items-center justify-center font-extrabold ${idx === 0 ? 'text-yellow-400 border border-yellow-400' : idx === 1 ? 'text-slate-200 border border-slate-300' : idx === 2 ? 'text-amber-500 border border-amber-500' : 'text-slate-400'}">#${idx+1}</span>
-                            <div class="truncate">
-                                <div class="font-bold truncate ${isPlayer ? 'text-emerald-300' : 'text-white'}">${escapeHtml(row.name)}</div>
-                                <div class="text-[10px] text-slate-400 truncate">Kỷ lục: ${escapeHtml(row.fish)} • ${escapeHtml(row.time || '')}</div>
+            if (sortedRows.length === 0) {
+                topContainer.innerHTML = `<div class="py-8 text-center text-slate-400 text-xs">Tuần này chưa ai lên cá.<br><b class="text-amber-300">Hãy là người mở hàng!</b></div>`;
+            } else {
+                topContainer.innerHTML = sortedRows.map((row, idx) => {
+                    const isPlayer = row.isMe || row.name === playerName;
+                    const mainMetric = `${Number(row.totalWeight || row.weight || 0).toFixed(2)} kg`;
+                    const subMetric = `${row.count || 1} con • To nhất: ${Number(row.weight || 0).toFixed(1)}kg`;
+                    const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`;
+                    return `
+                        <div class="p-2.5 rounded-2xl ${isPlayer ? 'bg-emerald-900/50 border-emerald-400/60' : 'bg-slate-800/70 border-white/10'} border flex items-center justify-between text-xs">
+                            <div class="flex items-center gap-2.5 min-w-0">
+                                <span class="w-7 h-7 shrink-0 rounded-full bg-slate-900 flex items-center justify-center font-extrabold ${idx < 3 ? 'text-base' : 'text-[10px] text-slate-400'}">${medal}</span>
+                                <div class="truncate">
+                                    <div class="font-bold truncate ${isPlayer ? 'text-emerald-300' : 'text-white'}">${escapeHtml(row.name)}${isPlayer ? ' (bạn)' : ''}</div>
+                                    <div class="text-[10px] text-slate-400 truncate">Kỷ lục: ${escapeHtml(row.fish)} ${row.time ? '• ' + escapeHtml(row.time) : ''}</div>
+                                </div>
+                            </div>
+                            <div class="text-right shrink-0 ml-2">
+                                <div class="font-extrabold text-amber-300 text-sm">${mainMetric}</div>
+                                <div class="text-[9px] text-emerald-300 font-semibold">${subMetric}</div>
                             </div>
                         </div>
-                        <div class="text-right shrink-0 ml-2">
-                            <div class="font-extrabold text-amber-300 text-sm">${mainMetric}</div>
-                            <div class="text-[9px] text-emerald-300 font-semibold">${subMetric}</div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
+                    `;
+                }).join('');
+            }
 
             chatContainer.innerHTML = communityComments.map(c => `
                 <div class="p-2.5 rounded-xl bg-slate-800/60 border border-white/10 text-xs">
@@ -1991,6 +2151,177 @@
                     <div class="text-slate-200 mt-0.5">${escapeHtml(c.text)}</div>
                 </div>
             `).join('');
+        }
+
+        /********************************************************************
+         * 5c. QUÀ ĐIỂM DANH & NHIỆM VỤ HẰNG NGÀY
+         ********************************************************************/
+        const DAILY_CHECKIN_REWARDS = [50, 80, 120, 160, 200, 260, 400];   // xu thưởng ngày 1 → ngày 7, hết 7 ngày quay lại ngày 1
+        let dailyState = { day: '', streak: 0, lastCheckinDay: '', progress: {}, claimed: {} };
+
+        function ensureToday() {
+            const day = vnDayKey();
+            if (dailyState.day !== day) {
+                dailyState.day = day;
+                dailyState.progress = {};
+                dailyState.claimed = {};
+            }
+        }
+        function hasCheckedInToday() { ensureToday(); return dailyState.lastCheckinDay === dailyState.day; }
+        // Chuỗi điểm danh còn hiệu lực nếu lần gần nhất là hôm nay hoặc hôm qua
+        function activeStreak() {
+            ensureToday();
+            const yesterday = vnDayKey(Date.now() - DAY_MS);
+            return (dailyState.lastCheckinDay === dailyState.day || dailyState.lastCheckinDay === yesterday) ? (dailyState.streak || 0) : 0;
+        }
+
+        // Mỗi ngày 3 nhiệm vụ: 1 dễ, 1 theo loài cá, 1 khó hơn. Chọn theo ngày nên mọi người có cùng nhiệm vụ.
+        function dailyMissionsFor(day) {
+            let h = 0;
+            for (let i = 0; i < day.length; i++) h = (h * 31 + day.charCodeAt(i)) >>> 0;
+            const pick = (arr, salt) => arr[(h + salt * 7) % arr.length];
+            const speciesName = (id) => { const f = FORTUNE_CATCHES.find(x => x.id === id); return f ? f.name : id; };
+            const easy = [
+                { id: 'catch3', text: 'Lên bờ 3 con cá', type: 'catch', target: 3, reward: 80 },
+                { id: 'chum3', text: 'Xả ổ 3 lần', type: 'chum', target: 3, reward: 60 },
+                { id: 'kg10', text: 'Câu tổng cộng 10 kg cá', type: 'weight', target: 10, reward: 100 }
+            ];
+            const species = ['ro_phi', 'ca_diec', 'ca_troi', 'chep_vang'].map(id => (
+                { id: 'sp_' + id, text: `Câu 2 con ${speciesName(id)}`, type: 'species', species: id, target: 2, reward: 120 }
+            ));
+            const hard = [
+                { id: 'catch6', text: 'Lên bờ 6 con cá', type: 'catch', target: 6, reward: 150 },
+                { id: 'kg25', text: 'Câu tổng cộng 25 kg cá', type: 'weight', target: 25, reward: 180 },
+                { id: 'big5', text: 'Lên một con cá từ 5 kg trở lên', type: 'bigfish', min: 5, target: 1, reward: 120 },
+                { id: 'sell300', text: 'Bán cá thu về 300 xu', type: 'sell', target: 300, reward: 90 }
+            ];
+            return [pick(easy, 1), pick(species, 2), pick(hard, 3)];
+        }
+
+        function missionProgress(m) { return Math.min(m.target, dailyState.progress[m.id] || 0); }
+        function missionDone(m) { return missionProgress(m) >= m.target; }
+
+        // Ghi nhận một hành động của người chơi vào tiến độ nhiệm vụ
+        function missionEvent(type, payload) {
+            ensureToday();
+            dailyMissionsFor(dailyState.day).forEach(m => {
+                if (dailyState.claimed[m.id]) return;
+                const before = missionDone(m);
+                let add = 0;
+                if (m.type === 'catch' && type === 'catch' && payload.id !== 'dep_to_ong') add = 1;
+                else if (m.type === 'weight' && type === 'catch' && payload.id !== 'dep_to_ong') add = payload.weight;
+                else if (m.type === 'species' && type === 'catch' && payload.id === m.species) add = 1;
+                else if (m.type === 'bigfish' && type === 'catch' && payload.id !== 'dep_to_ong' && payload.weight >= m.min) add = 1;
+                else if (m.type === 'chum' && type === 'chum') add = 1;
+                else if (m.type === 'sell' && type === 'sell') add = Number(payload) || 0;
+                if (!add) return;
+                dailyState.progress[m.id] = +((dailyState.progress[m.id] || 0) + add).toFixed(2);
+                if (!before && missionDone(m)) {
+                    setTimeout(() => showBannerToast(`✅ Xong nhiệm vụ "${m.text}"! Vào Nhiệm vụ nhận +${m.reward} xu.`, 'amber'), 2600);
+                }
+            });
+            updateDailyBadge();
+        }
+
+        function updateDailyBadge() {
+            const badge = document.getElementById('dailyBadge');
+            if (!badge) return;
+            ensureToday();
+            const claimable = (hasCheckedInToday() ? 0 : 1)
+                + dailyMissionsFor(dailyState.day).filter(m => missionDone(m) && !dailyState.claimed[m.id]).length;
+            badge.textContent = claimable;
+            badge.classList.toggle('hidden', claimable === 0);
+        }
+
+        function claimDailyCheckin() {
+            if (hasCheckedInToday()) return;
+            const streak = activeStreak() + 1;
+            const reward = DAILY_CHECKIN_REWARDS[(streak - 1) % DAILY_CHECKIN_REWARDS.length];
+            dailyState.streak = streak;
+            dailyState.lastCheckinDay = dailyState.day;
+            playerCoins += reward;
+            triggerCoinBurstEffect(reward);
+            updateStatsHUD();
+            saveGameProgress();
+            renderDailyModal();
+            showBannerToast(`📅 Điểm danh ngày ${((streak - 1) % 7) + 1}: +${reward} xu! Mai quay lại nhận nhiều hơn.`, 'amber');
+        }
+
+        function claimMission(id) {
+            ensureToday();
+            const m = dailyMissionsFor(dailyState.day).find(x => x.id === id);
+            if (!m || !missionDone(m) || dailyState.claimed[id]) return;
+            dailyState.claimed[id] = true;
+            playerCoins += m.reward;
+            triggerCoinBurstEffect(m.reward);
+            updateStatsHUD();
+            saveGameProgress();
+            renderDailyModal();
+        }
+
+        function renderDailyModal() {
+            ensureToday();
+            const checked = hasCheckedInToday();
+            const streak = activeStreak();
+            const todaySlot = checked ? ((streak - 1) % 7) : (streak % 7);        // ô của hôm nay (0..6)
+            document.getElementById('dailyStreakLabel').textContent = streak > 0 ? `Chuỗi ${streak} ngày liên tiếp` : 'Bắt đầu chuỗi hôm nay';
+            document.getElementById('dailyCheckinStrip').innerHTML = DAILY_CHECKIN_REWARDS.map((r, i) => {
+                const got = i < todaySlot || (i === todaySlot && checked);
+                const isToday = i === todaySlot;
+                return `<div class="rounded-xl py-1.5 text-center border ${got ? 'bg-emerald-900/60 border-emerald-400/50' : isToday ? 'bg-amber-500/25 border-amber-400' : 'bg-slate-950/70 border-white/10'}">
+                    <div class="text-[8px] ${isToday ? 'text-amber-200 font-bold' : 'text-slate-400'}">Ngày ${i + 1}</div>
+                    <div class="text-[10px] font-extrabold ${got ? 'text-emerald-300' : 'text-amber-300'}">${got ? '✓' : '+' + r}</div>
+                </div>`;
+            }).join('');
+            const btn = document.getElementById('dailyCheckinBtn');
+            if (checked) {
+                const next = DAILY_CHECKIN_REWARDS[(streak) % 7];
+                btn.textContent = `✓ Đã điểm danh hôm nay • Mai nhận +${next} xu`;
+                btn.className = 'w-full py-2.5 rounded-2xl font-bold text-xs bg-slate-800 text-slate-400 border border-white/10';
+                btn.disabled = true;
+            } else {
+                btn.textContent = `🎁 Nhận quà điểm danh (+${DAILY_CHECKIN_REWARDS[todaySlot]} xu)`;
+                btn.className = 'w-full py-2.5 rounded-2xl font-black text-xs bg-gradient-to-r from-amber-500 to-yellow-400 text-slate-950 shadow active:scale-95 transition';
+                btn.disabled = false;
+            }
+            document.getElementById('dailyMissionList').innerHTML = dailyMissionsFor(dailyState.day).map(m => {
+                const p = missionProgress(m), done = missionDone(m), claimed = !!dailyState.claimed[m.id];
+                const shown = Number.isInteger(m.target) && m.type !== 'weight' ? Math.floor(p) : p.toFixed(1);
+                const action = claimed
+                    ? `<span class="px-2.5 py-1.5 rounded-xl bg-slate-800 text-slate-400 font-bold text-[10px] whitespace-nowrap">✓ Đã nhận</span>`
+                    : done
+                        ? `<button onclick="claimMission('${m.id}')" class="px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-400 text-slate-950 font-black text-[10px] whitespace-nowrap shadow active:scale-95 transition">Nhận +${m.reward}</button>`
+                        : `<span class="px-2.5 py-1.5 rounded-xl bg-slate-950/70 border border-white/10 text-amber-300 font-bold text-[10px] whitespace-nowrap">+${m.reward} xu</span>`;
+                return `<div class="p-2.5 rounded-2xl bg-slate-900/80 border ${done && !claimed ? 'border-amber-400/60' : 'border-white/10'}">
+                    <div class="flex items-center justify-between gap-2">
+                        <div class="min-w-0">
+                            <div class="font-bold text-white truncate">${escapeHtml(m.text)}</div>
+                            <div class="text-[10px] text-slate-400">${shown} / ${m.target}</div>
+                        </div>
+                        ${action}
+                    </div>
+                    <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden mt-1.5">
+                        <div class="h-full ${done ? 'bg-emerald-400' : 'bg-amber-400'}" style="width:${Math.round(p / m.target * 100)}%"></div>
+                    </div>
+                </div>`;
+            }).join('');
+            updateDailyBadge();
+        }
+
+        function toggleDailyModal(show) {
+            const modal = document.getElementById('dailyModal');
+            if (show) renderDailyModal();
+            modal.classList.toggle('hidden', !show);
+        }
+
+        // Mở bảng quà một lần khi vào game nếu hôm nay chưa điểm danh
+        function maybeOpenDailyOnEntry() {
+            updateDailyBadge();
+            if (!hasCheckedInWelcome || hasCheckedInToday()) return;
+            setTimeout(() => {
+                const anotherOpen = !!document.querySelector('[id$="Modal"]:not(.hidden)');
+                if (!anotherOpen && gameState === STATE.IDLE && !hasCheckedInToday()) toggleDailyModal(true);
+            }, 1600);
         }
 
         function toggleLeaderboardModal(show) {
@@ -2147,6 +2478,7 @@
             }
 
             playerCoins -= chumCost;
+            missionEvent('chum');
             audio.playPlop();
             const eff = getEffectiveTackleStats();
             const gain = eff.chumPower || 18;
@@ -2529,8 +2861,9 @@
             col.count = (col.count || 0) + 1;
             if (fish.weight > (col.maxWeight || 0)) col.maxWeight = fish.weight;
 
-            // 3. Nhảy điểm Bảng Xếp Hạng ngay lập tức
+            // 3. Nhảy điểm Bảng Xếp Hạng ngay lập tức + tính vào nhiệm vụ ngày
             checkAndUpdateLeaderboard(fish);
+            missionEvent('catch', fish);
             updateStatsHUD();
             saveGameProgress();
 
@@ -2576,6 +2909,7 @@
             const fish = currentPendingCatch;
             playerCoins += fish.sellPrice;
             currentPendingCatch = null;
+            missionEvent('sell', fish.sellPrice);
 
             triggerCoinBurstEffect(fish.sellPrice);
 
@@ -2633,7 +2967,10 @@
                 if (localStorage.getItem(FOLLOW_SEEN_KEY) === today) return;
                 localStorage.setItem(FOLLOW_SEEN_KEY, today);
             } catch (e) {}
-            setTimeout(() => { if (gameState === STATE.IDLE) openFollowModal(); }, 1400);
+            // Không chen lên trên bảng khác đang mở (cửa hàng, xếp hạng...)
+            setTimeout(() => {
+                if (gameState === STATE.IDLE && !document.querySelector('[id$="Modal"]:not(.hidden)')) openFollowModal();
+            }, 1400);
         }
 
         function keepCatchAndContinue() {
@@ -3057,6 +3394,7 @@
             if (!fish) return;
             const price = Number(fish.sellPrice) || 20;
             playerCoins += price;
+            missionEvent('sell', price);
             stats.basket.splice(idx, 1);
             triggerCoinBurstEffect(price);
             updateStatsHUD();
@@ -3069,6 +3407,7 @@
             if (stats.basket.length === 0) return;
             const totalEarned = stats.basket.reduce((sum, f) => sum + (f.sellPrice || 20), 0);
             playerCoins += totalEarned;
+            missionEvent('sell', totalEarned);
             stats.basket = [];
             triggerCoinBurstEffect(totalEarned);
             updateStatsHUD();
@@ -3507,6 +3846,8 @@
                 totalWeight: stats.totalWeight,
                 maxSingleWeight: stats.maxSingleWeight,
                 bestFishName: stats.bestFishName,
+                week: weekState,
+                daily: dailyState,
                 communityComments,
                 leaderboard
             };
@@ -3607,6 +3948,28 @@
             if (typeof data.totalWeight === 'number') stats.totalWeight = data.totalWeight;
             if (typeof data.maxSingleWeight === 'number') stats.maxSingleWeight = data.maxSingleWeight;
             if (typeof data.bestFishName === 'string') stats.bestFishName = data.bestFishName;
+            // Thành tích tuần và tiến độ điểm danh / nhiệm vụ (tự xoá khi sang tuần mới, ngày mới)
+            if (data.week && typeof data.week === 'object' && typeof data.week.key === 'string') {
+                weekState = {
+                    key: data.week.key,
+                    totalWeight: Number(data.week.totalWeight) || 0,
+                    count: Number(data.week.count) || 0,
+                    maxWeight: Number(data.week.maxWeight) || 0,
+                    bestFish: String(data.week.bestFish || '')
+                };
+            }
+            if (data.daily && typeof data.daily === 'object') {
+                dailyState = {
+                    day: String(data.daily.day || ''),
+                    streak: Number(data.daily.streak) || 0,
+                    lastCheckinDay: String(data.daily.lastCheckinDay || ''),
+                    progress: (data.daily.progress && typeof data.daily.progress === 'object') ? data.daily.progress : {},
+                    claimed: (data.daily.claimed && typeof data.daily.claimed === 'object') ? data.daily.claimed : {}
+                };
+            }
+            ensureCurrentWeek();
+            ensureToday();
+            if (weekState.count > 0 && playerName) upsertWeekRow(myWeekEntry());
             if (Array.isArray(data.communityComments)) communityComments = data.communityComments;
             if (Array.isArray(data.leaderboard)) leaderboard = data.leaderboard;
         }
@@ -3880,6 +4243,7 @@
                 renderLeaderboardAndChat();
                 showBannerToast(`👋 Chào mừng ${playerName} quay lại! Tiến độ của bạn vẫn được giữ nguyên.`, 'emerald');
             }
+            maybeOpenDailyOnEntry();
             await restoreSavedMediaOnStartup();
             initGoogleSitesLiveRelay();
             requestAnimationFrame(animateLake);
@@ -3966,6 +4330,20 @@
                                     leaderboard.sort((a, b) => (b.isMe ? 1e9 : (b.totalWeight || 0)) - (a.isMe ? 1e9 : (a.totalWeight || 0)));
                                     leaderboard.length = 60;
                                 }
+                                // Dòng giải tuần đi kèm (chỉ nhận nếu đúng tuần hiện tại và không phải tên của mình)
+                                const w = payload.data.weekEntry;
+                                if (w && w.name && w.weekKey === currentWeekKey() && cleanText(w.name, 24) !== playerName) {
+                                    upsertWeekRow({
+                                        name: cleanText(w.name, 24),
+                                        fish: cleanText(w.fish, 60),
+                                        weight: Number(w.weight) || 0,
+                                        totalWeight: Number(w.totalWeight) || 0,
+                                        count: Number(w.count) || 0,
+                                        time: cleanText(w.time, 12),
+                                        weekKey: w.weekKey,
+                                        isMe: false
+                                    });
+                                }
                                 showRemoteComment(payload.data.comment);
                                 renderLeaderboardAndChat();
                             }
@@ -3999,7 +4377,7 @@
                     import('https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js'),
                     import('https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js')
                 ]);
-                const { getFirestore, doc, getDoc, setDoc, collection, query, orderBy, limit, onSnapshot } = fs;
+                const { getFirestore, doc, getDoc, getDocs, setDoc, collection, query, where, onSnapshot } = fs;
                 const db = getFirestore(initializeApp(FIREBASE_CONFIG));
 
                 const sha256Hex = async (text) => {
@@ -4074,41 +4452,60 @@
                     if (document.hidden && pendingSave) { clearTimeout(saveTimer); flushSave(); }
                 });
 
-                // Bảng xếp hạng dùng chung
-                async function pushBoardEntry(entry) {
-                    if (!cloudSaveId || !entry || !entry.name) return;
+                // Bảng xếp hạng dùng chung. Mỗi người có 1 dòng "mọi thời đại" (weekKey = 'all')
+                // và mỗi tuần 1 dòng riêng (weekKey = mã tuần), tất cả nằm trong bộ "leaderboard".
+                const boardCol = collection(db, 'leaderboard');
+                const cleanRow = (e, weekKey) => ({
+                    name: String(e.name).slice(0, 24),
+                    fish: String(e.fish || '').slice(0, 60),
+                    weight: Number(e.weight || 0),
+                    totalWeight: Number(e.totalWeight || e.weight || 0),
+                    count: Number(e.count || 0),
+                    time: String(e.time || '').slice(0, 12),
+                    weekKey,
+                    ts: Date.now()
+                });
+                async function pushBoardEntries(entry, weekEntry) {
+                    if (!cloudSaveId) return;
+                    const boardId = await boardIdOf(cloudSaveId);
                     try {
-                        await setDoc(doc(db, 'leaderboard', await boardIdOf(cloudSaveId)), {
-                            name: String(entry.name).slice(0, 24),
-                            fish: String(entry.fish || ''),
-                            weight: Number(entry.weight || 0),
-                            totalWeight: Number(entry.totalWeight || entry.weight || 0),
-                            count: Number(entry.count || 0),
-                            time: String(entry.time || ''),
-                            ts: Date.now()
-                        });
+                        if (entry && entry.name) await setDoc(doc(db, 'leaderboard', boardId), cleanRow(entry, 'all'));
+                    } catch (e) {}
+                    try {
+                        if (weekEntry && weekEntry.name && /^w\d+$/.test(weekEntry.weekKey || '')) {
+                            await setDoc(doc(db, 'leaderboard', `${boardId}_${weekEntry.weekKey}`), cleanRow(weekEntry, weekEntry.weekKey));
+                        }
                     } catch (e) {}
                 }
-                window.pushLeaderboardToCloud = (entry) => pushBoardEntry(entry);
-                window.syncPlayerToCloud = () => pushBoardEntry(leaderboard.find(x => x.isMe || x.name === playerName));
+                window.pushLeaderboardToCloud = (entry, weekEntry) => pushBoardEntries(entry, weekEntry);
+                window.syncPlayerToCloud = () => pushBoardEntries(
+                    leaderboard.find(x => x.isMe || x.name === playerName),
+                    weekState.count > 0 ? myWeekEntry() : null
+                );
 
-                // Chỉ bắt đầu nghe bảng xếp hạng sau khi game đã đọc xong bản lưu trên máy
-                const startBoardSync = () => onSnapshot(query(collection(db, 'leaderboard'), orderBy('totalWeight', 'desc'), limit(50)), (snapshot) => {
-                    const cloudRows = [];
+                const rowsFromSnapshot = (snapshot) => {
+                    const rows = [];
                     snapshot.forEach(d => {
                         const data = d.data();
                         if (data && typeof data.name === 'string' && data.name && typeof data.weight === 'number') {
-                            cloudRows.push({
+                            rows.push({
                                 name: data.name.slice(0, 24),
                                 fish: String(data.fish || '').slice(0, 60),
                                 weight: Number(data.weight) || 0,
                                 totalWeight: Number(data.totalWeight) || 0,
                                 count: Number(data.count) || 0,
                                 time: String(data.time || '').slice(0, 12),
+                                weekKey: String(data.weekKey || ''),
                                 isMe: data.name === playerName
                             });
                         }
                     });
+                    return rows;
+                };
+
+                // Bảng mọi thời đại
+                const startAllTimeSync = () => onSnapshot(query(boardCol, where('weekKey', '==', 'all')), (snapshot) => {
+                    const cloudRows = rowsFromSnapshot(snapshot);
                     if (cloudRows.length === 0) return;
                     const merged = new Map();
                     [...leaderboard, ...cloudRows].forEach(item => {
@@ -4117,11 +4514,36 @@
                         const prevTotal = prev ? (typeof prev.totalWeight === 'number' ? prev.totalWeight : (prev.weight || 0)) : -1;
                         if (!prev || itemTotal >= prevTotal) merged.set(item.name, item);
                     });
-                    leaderboard = Array.from(merged.values()).slice(0, 60);
+                    leaderboard = Array.from(merged.values())
+                        .sort((a, b) => (b.totalWeight || 0) - (a.totalWeight || 0)).slice(0, 80);
                     renderLeaderboardAndChat();
-                }, (err) => {
-                    console.warn('Không đồng bộ được bảng xếp hạng:', err);
-                });
+                }, (err) => console.warn('Không đồng bộ được bảng xếp hạng:', err));
+
+                // Bảng giải tuần: nghe tuần hiện tại, sang tuần mới thì nghe lại; lấy top tuần trước một lần
+                let stopWeekSync = null;
+                const startWeekSync = (weekKey) => {
+                    if (stopWeekSync) { try { stopWeekSync(); } catch (e) {} }
+                    stopWeekSync = onSnapshot(query(boardCol, where('weekKey', '==', weekKey)), (snapshot) => {
+                        if (weekKey !== currentWeekKey()) return;
+                        const cloudRows = rowsFromSnapshot(snapshot);
+                        const mine = weekBoard.find(r => r.isMe);
+                        const others = cloudRows.filter(r => !r.isMe);
+                        const cloudMine = cloudRows.find(r => r.isMe);
+                        // Dòng của mình: lấy bản có tổng kg lớn hơn giữa máy này và máy chủ
+                        const myRow = (mine && (!cloudMine || mine.totalWeight >= cloudMine.totalWeight)) ? mine : cloudMine;
+                        weekBoard = myRow ? [...others, { ...myRow, isMe: true }] : others;
+                        renderLeaderboardAndChat();
+                    }, (err) => console.warn('Không đồng bộ được bảng giải tuần:', err));
+
+                    const prevKey = 'w' + (Number(weekKey.slice(1)) - 1);
+                    getDocs(query(boardCol, where('weekKey', '==', prevKey))).then((snapshot) => {
+                        lastWeekTop = rowsFromSnapshot(snapshot)
+                            .sort((a, b) => (b.totalWeight || 0) - (a.totalWeight || 0)).slice(0, 3);
+                        renderLeaderboardAndChat();
+                    }).catch(() => {});
+                };
+                window.onWeekChanged = (weekKey) => startWeekSync(weekKey);
+                const startBoardSync = () => { startAllTimeSync(); startWeekSync(currentWeekKey()); };
 
                 // Chờ game đọc xong bản lưu trên máy rồi mới báo sẵn sàng
                 while (typeof gameProgressLoaded === 'undefined' || !gameProgressLoaded) {
